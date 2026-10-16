@@ -53,3 +53,7 @@ Thumbs.db
 
 # The pipeline's work directory (scripts/recompile.sh)
 build/
+
+# The player's own console identity (EEPROM, HDD key, BIOS, the start of the
+# disk): secrets unique to one console, never committed or shared
+/xboxbackup/
