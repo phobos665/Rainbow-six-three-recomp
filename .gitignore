@@ -60,3 +60,6 @@ build/
 # and a console backup copied in as it is (EvoX: backups/eeprom/backup/)
 /backups/
 /backup/
+
+# A content pack copied in for its title update (game content, not ours)
+/RainbowSix3DLC.zip
