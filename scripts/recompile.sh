@@ -19,5 +19,9 @@ if [ ! -f "$HERE/game/default_xdk_symbols.json" ]; then
     echo "by name (no rendering, no sound). Make it with tools.xdk_symbols; README.md."
     exit 1
 fi
+# Lift a copy with the Xbox Live block a hard-drive copy carries undone
+# (scripts/live_unpatch.py); the game's own files stay as they are.
+"$PY" "$HERE/scripts/live_unpatch.py" "$HERE/game" "$HERE/build/pipeline/xbe"
+XBE="$HERE/build/pipeline/xbe/default.xbe"
 exec "$PY" scripts/recompile.py "$XBE" --work-dir "$HERE/build/pipeline" \
     --project "$HERE" "$@"
