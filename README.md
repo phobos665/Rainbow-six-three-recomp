@@ -24,6 +24,10 @@ sound.
   drawn as the console draws it.
 - **Sound.** The game makes about 800 DirectSound streams in a session, one
   per sound; all of them are heard (toolkit `f00c870`).
+- **Xbox Live (Insignia).** Signs in and plays online, with title update
+  0x501 installed by the recompiled dashboard updater. It needs your own
+  console's identity backup; the steps are in
+  [docs/xbox-live.md](docs/xbox-live.md).
 
 Known issues:
 
