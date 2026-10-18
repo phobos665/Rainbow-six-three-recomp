@@ -23,7 +23,9 @@ sound.
   bright pass with depth in alpha, eight-level blur, additive composite) is
   drawn as the console draws it.
 - **Sound.** The game makes about 800 DirectSound streams in a session, one
-  per sound; all of them are heard (toolkit `f00c870`).
+  per sound. All of them are heard with the toolkit's stream-pool fix
+  (`f00c870`), which is not yet on the toolkit's `main`: until it is, some
+  sounds may be missing.
 - **Xbox Live (Insignia).** Signs in and plays online, with title update
   0x501 installed by the recompiled dashboard updater. It needs your own
   console's identity backup; the steps are in
@@ -49,12 +51,9 @@ Rainbow-six-three-recomp/
 
 ## Building
 
-You need the toolkit checked out beside this repository, at
-`../xboxrecomp`, at a commit that has the fixes this game needs. Until those
-are on the toolkit's `main`, that is its `title/rs3-split` branch (`main`
-plus the DirectSound stream pool and per-project seeds). Point
-`XBOXRECOMP_DIR` elsewhere to use another checkout, both for
-`scripts/recompile.sh` and for CMake (`-DXBOXRECOMP_DIR=...`).
+You need the toolkit's `main` checked out beside this repository, at
+`../xboxrecomp`. Point `XBOXRECOMP_DIR` elsewhere to use another checkout,
+both for `scripts/recompile.sh` and for CMake (`-DXBOXRECOMP_DIR=...`).
 
 The toolkit's own requirements apply: see its `docs/GETTING_STARTED.md`
 (on macOS: Homebrew CMake and Ninja, the LunarG Vulkan SDK, a Python with
