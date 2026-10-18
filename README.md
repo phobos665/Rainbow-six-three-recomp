@@ -23,12 +23,10 @@ sound.
   bright pass with depth in alpha, eight-level blur, additive composite) is
   drawn as the console draws it.
 - **Sound.** The game makes about 800 DirectSound streams in a session, one
-  per sound. All of them are heard with the toolkit's stream-pool fix
-  (`f00c870`), which is not yet on the toolkit's `main`: until it is, some
-  sounds may be missing.
+  per sound; the toolkit's stream pool keeps all of them heard.
 - **Xbox Live (Insignia).** Signs in and plays online, with title update
-  0x501 installed by the recompiled dashboard updater. It needs your own
-  console's identity backup; the steps are in
+  0x501, which the game downloads and installs itself as a console does. It
+  needs a backup of your own console; see
   [docs/xbox-live.md](docs/xbox-live.md).
 
 Known issues:
@@ -45,7 +43,10 @@ Rainbow-six-three-recomp/
   src/recomp_manual.c     the title's own overrides, each with its reason
   src/recomp/gen/         lifted code (generated, not committed)
   config/seeds/           functions the disassembler cannot find on its own
+  scripts/build.sh        everything, from your files to build/play
+  scripts/doctor.py       checks the game files and the console backup
   scripts/recompile.sh    runs the toolkit's lift pipeline for this game
+  scripts/disc_xbe.py     the disc's default.xbe from a hard-drive copy's
   game/                   your game files (not committed)
 ```
 
@@ -60,32 +61,36 @@ The toolkit's own requirements apply: see its `docs/GETTING_STARTED.md`
 `capstone` in the toolkit's `.venv`).
 
 1. **Game files.** Extract the disc into `game/`, so that `game/default.xbe`
-   exists.
-2. **XDK symbols.** Build the toolkit's `third_party/XbSymbolDatabase` CLI
-   (`cmake --build ... --target XbSymbolDatabaseCLI`), then from the toolkit:
+   exists. A copy made to run from a console's hard disk will do.
+2. **Build.**
 
    ```bash
-   .venv/bin/python -m tools.xdk_symbols ../Rainbow-six-three-recomp/game/default.xbe \
-       --cli <path to XbSymbolDatabaseCLI>
+   scripts/build.sh
    ```
 
-   That writes `game/default_xdk_symbols.json`. Without it nothing is
-   replaced by name, and the game runs with no picture and no sound.
-3. **Lift.** `scripts/recompile.sh` (about six minutes, most of it
-   disassembly).
-4. **Build.**
+   It checks your files (`scripts/doctor.py`), builds the toolkit's XDK
+   symbol tool and makes the game's XDK symbols, lifts the game (about six
+   minutes, most of it disassembly) and builds it into `build/play`. With a
+   console backup in `xboxbackup/` it builds the online updater too
+   ([docs/xbox-live.md](docs/xbox-live.md)). Run it again after changing
+   anything: it redoes only what is missing (`--relift` lifts again).
 
-   ```bash
-   cmake -S . -B build/Release -G Ninja -DCMAKE_BUILD_TYPE=Release
-   cmake --build build/Release --target rs3_recomp --parallel
-   ```
+By hand, the same steps: the XDK symbols with the toolkit's
+`tools.xdk_symbols` (`--cli` its `XbSymbolDatabaseCLI`), which writes
+`game/default_xdk_symbols.json` (without it nothing is replaced by name, and
+the game runs with no picture and no sound); `scripts/recompile.sh`; then
 
-   On Windows the toolkit's launcher is built too (`rs3_launcher`).
+```bash
+cmake -S . -B build/Release -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build/Release --target rs3_recomp --parallel
+```
+
+On Windows the toolkit's launcher is built too (`rs3_launcher`).
 
 ## Running
 
 ```bash
-build/Release/rs3_recomp
+build/play/rs3_recomp
 ```
 
 Settings live in the per-user settings file the toolkit writes
