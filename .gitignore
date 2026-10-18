@@ -53,3 +53,16 @@ Thumbs.db
 
 # The pipeline's work directory (scripts/recompile.sh)
 build/
+
+# The player's own console identity (EEPROM, HDD key, BIOS, the start of the
+# disk): secrets unique to one console, never committed or shared
+/xboxbackup/
+# and a console backup copied in as it is (EvoX: backups/eeprom/backup/)
+/backups/
+/backup/
+
+# A content pack copied in for its title update (game content, not ours)
+/RainbowSix3DLC.zip
+
+# Title update 0x501, lifted (scripts/recompile.sh --tu501)
+src/recomp/gen_tu501/

@@ -43,5 +43,10 @@
   "start": "0x00415680",
   "observed": true,
   "note": "Indirect-call target observed at runtime; decodes as a function body."
+ },
+ {
+  "start": "0x00397E0D",
+  "observed": true,
+  "note": "XOnline ASN.1 encoder for the TGS-REQ body (PDU 0x2A), reached only through the encoder table at 0x00571160; unresolved at Xbox Live sign-in (TGS step)."
  }
 ]

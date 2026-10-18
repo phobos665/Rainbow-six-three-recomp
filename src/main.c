@@ -90,7 +90,11 @@ extern ptrdiff_t g_xbox_mem_offset;
  * TODO: Set these from your xbe_parser output.
  * Run: py -3 -m tools.xbe_parser game/default.xbe
  */
+#ifdef RS3_TU501
+#define YOUR_GAME_ENTRY_POINT   0x0009F2C7  /* title update 0x501's XBE entry point */
+#else
 #define YOUR_GAME_ENTRY_POINT   0x0009F067  /* XBE entry point VA */
+#endif
 /* Relative to the executable's own directory, build/<Config>/: the game's
  * files go in game/ at the top of this repository. A game/ folder beside the
  * executable is looked at first, and RECOMP_GAME_DIR overrides both. */
@@ -469,6 +473,24 @@ static int title_main(int argc, char **argv)
             return 1;
         }
         printf("Game files: %s\n", g_game_dir);
+#ifdef RS3_TU501
+        /* Title update 0x501: the game folder is still the disc (D:), and
+         * the XBE is the update's, where the online updater installed it,
+         * E:\TDATA\55530013\$u -- or RECOMP_TU501_XBE. */
+        {
+            const char *x = getenv("RECOMP_TU501_XBE");
+            const char *hdd = getenv("RECOMP_HDD_DIR");
+            if (x && *x)
+                snprintf(g_xbe_path, sizeof g_xbe_path, "%s", x);
+            else if (hdd && *hdd)
+                snprintf(g_xbe_path, sizeof g_xbe_path, "%s/TDATA/55530013/$u/default.xbe", hdd);
+            else
+                snprintf(g_xbe_path, sizeof g_xbe_path, "%s/TDATA/55530013/$u/default.xbe",
+                         g_game_dir);
+            xbox_path_normalize(g_xbe_path);
+            printf("Title update 0x501: %s\n", g_xbe_path);
+        }
+#endif
         if (!load_xbe(g_xbe_path, &xbe_data, &xbe_size)) {
             snprintf(message, sizeof message,
                      "Found the game at\n%s\nbut could not read default.xbe.",
