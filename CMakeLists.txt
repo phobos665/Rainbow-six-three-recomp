@@ -10,7 +10,16 @@ cmake_minimum_required(VERSION 3.20)
 # C and C++: the runtime's renderer has C++ in it (the DXC loader, VMA),
 # so the executable links with the C++ driver and its standard library.
 # The game's own sources are all C.
-project(rs3_recomp C CXX)
+# RS3_TU501=ON builds Rainbow Six 3 with title update 0x501 instead of the
+# disc: its XBE (the one the online updater installs to E:\TDATA\55530013\$u)
+# lifted into src/recomp/gen_tu501 by `scripts/recompile.sh --tu501 <xbe>`.
+# Use its own build folder; the executable is rs3_tu501_recomp.
+option(RS3_TU501 "Build title update 0x501 instead of the disc" OFF)
+if(RS3_TU501)
+    project(rs3_tu501_recomp C CXX)
+else()
+    project(rs3_recomp C CXX)
+endif()
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -69,12 +78,19 @@ add_subdirectory(${XBOXRECOMP_DIR} ${CMAKE_BINARY_DIR}/xboxrecomp)
 # without a manual re-configure. A plain GLOB is evaluated once at configure
 # time, so a newly generated file (an extra chunk, recomp_stubs_unresolved.c)
 # is silently left out of the build and shows up as unresolved externals.
-file(GLOB RECOMP_GEN_SOURCES CONFIGURE_DEPENDS "src/recomp/gen/*.c")
+if(RS3_TU501)
+    set(RS3_GEN_DIR src/recomp/gen_tu501)
+    set(RS3_MANUAL src/recomp_manual_tu501.c)
+else()
+    set(RS3_GEN_DIR src/recomp/gen)
+    set(RS3_MANUAL src/recomp_manual.c)
+endif()
+file(GLOB RECOMP_GEN_SOURCES CONFIGURE_DEPENDS "${RS3_GEN_DIR}/*.c")
 
 # Core game sources
 set(GAME_SOURCES
     src/main.c
-    src/recomp_manual.c
+    ${RS3_MANUAL}
     # Add game-specific sources here, e.g.:
     # src/asset_loader.c
     # src/custom_renderer.c
@@ -94,6 +110,10 @@ add_executable(${PROJECT_NAME}
 # elsewhere, whose main() hands the title its own thread (host_main_posix).
 if(WIN32)
     set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE ON)
+endif()
+
+if(RS3_TU501)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE RS3_TU501=1)
 endif()
 
 # Link against the xboxrecomp umbrella target (all 6 runtime libraries)

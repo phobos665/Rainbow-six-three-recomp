@@ -63,3 +63,6 @@ build/
 
 # A content pack copied in for its title update (game content, not ours)
 /RainbowSix3DLC.zip
+
+# Title update 0x501, lifted (scripts/recompile.sh --tu501)
+src/recomp/gen_tu501/

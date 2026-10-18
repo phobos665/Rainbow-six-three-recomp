@@ -1,0 +1,52 @@
+[
+ {
+  "start": "0x0009F253",
+  "observed": true,
+  "note": "The disc build's seed 0x0009EFF3, found in title update 0x501 by its bytes (masked for calls and image addresses)."
+ },
+ {
+  "start": "0x003AD06A",
+  "observed": true,
+  "note": "The disc build's seed 0x003AC22A, found in title update 0x501 by its bytes (masked for calls and image addresses)."
+ },
+ {
+  "start": "0x0042C6E8",
+  "observed": true,
+  "note": "The disc build's seed 0x0042B848, found in title update 0x501 by its bytes (masked for calls and image addresses)."
+ },
+ {
+  "start": "0x00078110",
+  "observed": true,
+  "note": "The disc build's seed 0x00077E60, found in title update 0x501 by its bytes (masked for calls and image addresses)."
+ },
+ {
+  "start": "0x002F7FC0",
+  "observed": true,
+  "note": "The disc build's seed 0x002F6EA0, found in title update 0x501 by its bytes (masked for calls and image addresses)."
+ },
+ {
+  "start": "0x0040B2C0",
+  "observed": true,
+  "note": "The disc build's seed 0x0040A420, found in title update 0x501 by its bytes (masked for calls and image addresses)."
+ },
+ {
+  "start": "0x00398C4D",
+  "observed": true,
+  "note": "The disc build's seed 0x00397E0D, found in title update 0x501 by its bytes (masked for calls and image addresses)."
+ },
+ {
+  "start": "0x0015EC30",
+  "observed": true,
+  "note": "PsCreateSystemThreadEx StartContext1 observed at runtime; decodes as a function body."
+ },
+ {
+  "start": "0x00416360",
+  "observed": true,
+  "note": "Indirect-call target observed at runtime; decodes as a function body."
+ },
+ {
+  "start": "0x00416520",
+  "observed": true,
+  "note": "Indirect-call target observed at runtime; decodes as a function body."
+ }
+]
