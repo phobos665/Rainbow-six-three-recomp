@@ -37,9 +37,10 @@ if [ "${1:-}" = "--tu501" ]; then
         --gen-dir "$HERE/src/recomp/gen_tu501" --manual "$HERE/src/recomp_manual_tu501.c" \
         --seeds "$HERE/config/seeds/55530013_tu501.json" "$@"
 fi
-# Lift a copy with the Xbox Live block a hard-drive copy carries undone
-# (scripts/live_unpatch.py); the game's own files stay as they are.
-"$PY" "$HERE/scripts/live_unpatch.py" "$HERE/game" "$HERE/build/pipeline/xbe"
+# Lift the disc's default.xbe, with a hard-drive copy's patches undone
+# (scripts/disc_xbe.py), and keep it as the online updater's disc overlay,
+# build/disc_overlay. The game's own files stay as they are.
+"$PY" "$HERE/scripts/disc_xbe.py" "$HERE/game" "$HERE/build/pipeline/xbe" "$HERE/build/disc_overlay"
 XBE="$HERE/build/pipeline/xbe/default.xbe"
 exec "$PY" scripts/recompile.py "$XBE" --work-dir "$HERE/build/pipeline" \
     --project "$HERE" "$@"
