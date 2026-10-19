@@ -476,17 +476,27 @@ static int title_main(int argc, char **argv)
 #ifdef RS3_TU501
         /* Title update 0x501: the game folder is still the disc (D:), and
          * the XBE is the update's, where the online updater installed it,
-         * E:\TDATA\55530013\$u -- or RECOMP_TU501_XBE. */
+         * E:\TDATA\55530013\$u -- as the disc's build passes it on handing
+         * over (RECOMP_TITLE_UPDATE_XBE), else found the same way. Or
+         * RECOMP_TU501_XBE. */
         {
+            extern void recomp_config_set_title(uint32_t title_id);
             const char *x = getenv("RECOMP_TU501_XBE");
-            const char *hdd = getenv("RECOMP_HDD_DIR");
+            if (!x || !*x)
+                x = getenv("RECOMP_TITLE_UPDATE_XBE");
+            recomp_config_set_title(0x55530013u);   /* its settings: hdd_dir */
             if (x && *x)
                 snprintf(g_xbe_path, sizeof g_xbe_path, "%s", x);
-            else if (hdd && *hdd)
-                snprintf(g_xbe_path, sizeof g_xbe_path, "%s/TDATA/55530013/$u/default.xbe", hdd);
-            else
-                snprintf(g_xbe_path, sizeof g_xbe_path, "%s/TDATA/55530013/$u/default.xbe",
-                         g_game_dir);
+            else if (!xbox_title_update_xbe(0x55530013u, g_game_dir, g_xbe_path,
+                                            sizeof g_xbe_path)) {
+                snprintf(message, sizeof message,
+                         "This is the build for title update 0x501, which is not installed.\n\n"
+                         "Start the disc's build (rs3_recomp), sign in to Xbox Live and accept\n"
+                         "the update; it is installed into E:\\TDATA\\55530013\\$u (hdd_dir).");
+                fprintf(stderr, "%s\n", message);
+                host_error_box("Rainbow Six 3", message);
+                return 1;
+            }
             xbox_path_normalize(g_xbe_path);
             printf("Title update 0x501: %s\n", g_xbe_path);
         }
@@ -545,6 +555,11 @@ static int title_main(int argc, char **argv)
         extern void xbox_path_init(const char *game_dir, const char *save_dir);
         xbox_path_init(g_game_dir, NULL);
     }
+#ifndef RS3_TU501
+    /* Title update 0x501 installed, and its build beside this one: that runs
+     * instead, as a console runs $u\default.xbe. */
+    xbox_title_update_handoff(0x55530013u, g_game_dir, "rs3_tu501_recomp");
+#endif
 
     /* Step 5: Initialize kernel bridge (thunk table in Xbox memory) */
     printf("Initializing kernel bridge...\n");

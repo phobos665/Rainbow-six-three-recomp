@@ -23,13 +23,11 @@ sound.
   bright pass with depth in alpha, eight-level blur, additive composite) is
   drawn as the console draws it.
 - **Sound.** The game makes about 800 DirectSound streams in a session, one
-  per sound. All of them are heard with the toolkit's stream-pool fix
-  (`f00c870`), which is not yet on the toolkit's `main`: until it is, some
-  sounds may be missing.
+  per sound; the toolkit's stream pool keeps all of them heard.
 - **Xbox Live (Insignia).** Signs in and plays online, with title update
-  0x501 installed by the recompiled dashboard updater. It needs your own
-  console's identity backup; the steps are in
-  [docs/xbox-live.md](docs/xbox-live.md).
+  0x501, which the game downloads and installs itself as a console does. It
+  needs a backup of your own console; see
+  [Playing on Xbox Live](#playing-on-xbox-live).
 
 Known issues:
 
@@ -45,7 +43,10 @@ Rainbow-six-three-recomp/
   src/recomp_manual.c     the title's own overrides, each with its reason
   src/recomp/gen/         lifted code (generated, not committed)
   config/seeds/           functions the disassembler cannot find on its own
+  scripts/build.py        everything, from your files to build/play (build.sh, build.bat run it)
+  scripts/doctor.py       checks the game files and the console backup
   scripts/recompile.sh    runs the toolkit's lift pipeline for this game
+  scripts/disc_xbe.py     the disc's default.xbe from a hard-drive copy's
   game/                   your game files (not committed)
 ```
 
@@ -60,32 +61,36 @@ The toolkit's own requirements apply: see its `docs/GETTING_STARTED.md`
 `capstone` in the toolkit's `.venv`).
 
 1. **Game files.** Extract the disc into `game/`, so that `game/default.xbe`
-   exists.
-2. **XDK symbols.** Build the toolkit's `third_party/XbSymbolDatabase` CLI
-   (`cmake --build ... --target XbSymbolDatabaseCLI`), then from the toolkit:
+   exists. A copy made to run from a console's hard disk will do.
+2. **Build.**
 
    ```bash
-   .venv/bin/python -m tools.xdk_symbols ../Rainbow-six-three-recomp/game/default.xbe \
-       --cli <path to XbSymbolDatabaseCLI>
+   python3 scripts/build.py      # Windows: scripts\build.bat
    ```
 
-   That writes `game/default_xdk_symbols.json`. Without it nothing is
-   replaced by name, and the game runs with no picture and no sound.
-3. **Lift.** `scripts/recompile.sh` (about six minutes, most of it
-   disassembly).
-4. **Build.**
+   It checks your files (`scripts/doctor.py`), builds the toolkit's XDK
+   symbol tool and makes the game's XDK symbols, lifts the game (about six
+   minutes, most of it disassembly) and builds it into `build/play`. With a
+   console backup in `xboxbackup/` it builds the online updater too
+   ([docs/xbox-live.md](docs/xbox-live.md)). Run it again after changing
+   anything: it redoes only what is missing (`--relift` lifts again).
 
-   ```bash
-   cmake -S . -B build/Release -G Ninja -DCMAKE_BUILD_TYPE=Release
-   cmake --build build/Release --target rs3_recomp --parallel
-   ```
+By hand, the same steps: the XDK symbols with the toolkit's
+`tools.xdk_symbols` (`--cli` its `XbSymbolDatabaseCLI`), which writes
+`game/default_xdk_symbols.json` (without it nothing is replaced by name, and
+the game runs with no picture and no sound); `scripts/recompile.sh`; then
 
-   On Windows the toolkit's launcher is built too (`rs3_launcher`).
+```bash
+cmake -S . -B build/Release -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build/Release --target rs3_recomp --parallel
+```
+
+On Windows the toolkit's launcher is built too (`rs3_launcher`).
 
 ## Running
 
 ```bash
-build/Release/rs3_recomp
+build/play/rs3_recomp
 ```
 
 Settings live in the per-user settings file the toolkit writes
@@ -108,6 +113,77 @@ the runtime maps to the game folder: they are written into `game/UDATA`. It
 also fills its Z: cache partition (about 1 GB a run) under the save folder.
 Test runs belong on a copy of `game/` without `UDATA` (`RECOMP_GAME_DIR`)
 and with `RECOMP_SAVE_DIR` set to a fresh folder.
+
+## Playing on Xbox Live
+
+Rainbow Six 3 can sign in to [Insignia](https://insignia.live/), the free
+revival of the original Xbox Live, and play online with people on real
+consoles. This has been checked on macOS.
+
+Insignia only lets in consoles it knows, so the game signs in as **your own
+Xbox**. You give it a backup of that console; the build does everything else.
+
+### What you need
+
+- An original Xbox you own that can run homebrew (softmodded or chipped),
+  with the EvoX dashboard and FTP access.
+- A free account at [insignia.live](https://insignia.live/).
+- This game built as above, with its files in `game/`.
+
+### 1. Sign the Xbox up (once, on the console)
+
+1. If your modded BIOS blocks Xbox Live, run Insignia's **xblunblock** first.
+2. Run the **Insignia Setup Assistant** and register the console.
+3. Sign in once from the dashboard's **Xbox Live** section, so your gamertag
+   is on the console.
+
+### 2. Back up the Xbox (after step 1)
+
+1. In EvoX, choose **Backup eeprom**. It writes `eeprom.bin`, `hddinfo.txt`
+   and `disk.bin`.
+2. Connect to the Xbox over FTP and copy those three files, and the whole
+   **C:** drive (about 100 MB).
+3. Put them in this repository like this:
+
+   ```text
+   xboxbackup/
+     eeprom.bin
+     hddinfo.txt
+     disk.bin
+     C/            everything from the Xbox's C: drive
+   ```
+
+These files are your console's identity. **Never share them.** Git ignores
+`xboxbackup/`.
+
+### 3. Check and build
+
+```bash
+python3 scripts/doctor.py     # should end with "Xbox Live: ready."
+python3 scripts/build.py      # Windows: scripts\build.bat
+```
+
+### 4. Install the game's update (once)
+
+Insignia needs title update 0x501. The game fetches it itself:
+
+1. Start `build/play/rs3_recomp`.
+2. On the main menu choose **Xbox Live** and sign in.
+3. At "A required update is available", choose **OK**.
+4. The updater opens: choose **Yes**. When it says "Xbox Live is updating
+   your system", it closes and the game starts again.
+5. Quit the game and run `python3 scripts/build.py` again. This builds the
+   updated game.
+
+### 5. Play
+
+Start `build/play/rs3_recomp`. It opens the updated game by itself. Choose
+**Xbox Live** and sign in: your gamertag appears on the main menu, and you
+can join games and use Friends.
+
+Something not working? See the table in
+[docs/xbox-live.md](docs/xbox-live.md#troubleshooting), which also explains
+what the build does.
 
 ## What is specific to this game
 

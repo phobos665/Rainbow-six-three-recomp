@@ -160,6 +160,27 @@ __attribute__((constructor)) static void rs3_defaults(void)
 }
 #endif
 
+/* ── Rainbow Six 3: the disc's security sectors ────────────── */
+
+/*
+ * sub_000A03C2 is XAPI's start-up disc check, called from XapiInitProcess.
+ * After the security page (MODE SENSE 0x3E, which the runtime answers as an
+ * authenticated drive does), this XDK also reads the disc's security sectors
+ * (READ DVD STRUCTURE, 0x664 bytes) and checks Microsoft's RSA signature
+ * over them; anything else boots to the dashboard. A copy of the game's files
+ * has no security sectors, and on a console the drive has checked them before
+ * the title runs, so the check is answered as passed: STATUS_SUCCESS.
+ *
+ * A hard-drive copy's default.xbe does the same with a jge -> jmp at
+ * 0x000A05FA; the lift is of the disc's file (scripts/disc_xbe.py), so it is
+ * done here instead.
+ */
+void sub_000A03C2(void)
+{
+    g_eax = 0;
+    g_esp += 4u;          /* ret */
+}
+
 /* ── Rainbow Six 3: Bink movies paced by the clock ─────────── */
 
 /*
