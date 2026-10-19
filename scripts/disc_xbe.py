@@ -80,12 +80,13 @@ def restore(xbe: bytearray) -> list:
     return undone
 
 
-def main() -> int:
-    if len(sys.argv) not in (3, 4):
+def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else [str(a) for a in argv]
+    if len(argv) not in (2, 3):
         print(__doc__.strip().splitlines()[-1].strip(), file=sys.stderr)
         return 2
-    game, out = Path(sys.argv[1]), Path(sys.argv[2])
-    overlay = Path(sys.argv[3]) if len(sys.argv) == 4 else None
+    game, out = Path(argv[0]), Path(argv[1])
+    overlay = Path(argv[2]) if len(argv) == 3 else None
 
     xbe = bytearray((game / "default.xbe").read_bytes())
     if struct.unpack_from("<I", xbe, certificate(xbe) + 8)[0] != TITLE_ID:

@@ -6,7 +6,7 @@ which the game downloads and installs itself the first time, as a console
 does.
 
 You supply two things: the game's files, and a backup of your own console.
-`scripts/build.sh` does the rest. Checked on macOS; Windows and Linux are not
+`scripts/build.py` does the rest. Checked on macOS; Windows and Linux are not
 yet tried.
 
 ## 1. What you need
@@ -33,7 +33,7 @@ yet tried.
 ## 2. Build
 
 ```bash
-scripts/build.sh
+python3 scripts/build.py      # Windows: scripts\build.bat
 ```
 
 It checks the files, makes the XDK symbols, lifts and builds the game and
@@ -52,7 +52,7 @@ system" it closes and starts the game again.
 Then quit the game and build the update's game:
 
 ```bash
-scripts/build.sh
+python3 scripts/build.py      # Windows: scripts\build.bat
 ```
 
 This time it finds the update and builds `build/play/rs3_tu501_recomp`.
@@ -92,7 +92,7 @@ log) and installs the rest.
 - **The cache.** The game fills its cache partition (about 1 GB) under the
   save folder.
 - **Another computer.** Copy the repository's `game/` (with its `TDATA`, which
-  holds the update) and `xboxbackup/`, and run `scripts/build.sh` there.
+  holds the update) and `xboxbackup/`, and run `scripts/build.py` there.
 
 ## Troubleshooting
 
@@ -100,15 +100,15 @@ The toolkit guide's table covers the general cases. For this game:
 
 | Symptom | Cause | What to do |
 | --- | --- | --- |
-| "Cannot connect to Xbox Live" at once | the hard-drive copy's Live block in a lift made before `disc_xbe.py` | `scripts/build.sh --relift` |
-| "There was not enough memory to create the asynchronous logon task" | a lift without seed `0x00397E0D` | `scripts/build.sh --relift` |
+| "Cannot connect to Xbox Live" at once | the hard-drive copy's Live block in a lift made before `disc_xbe.py` | `scripts/build.py --relift` |
+| "There was not enough memory to create the asynchronous logon task" | a lift without seed `0x00397E0D` | `scripts/build.py --relift` |
 | the game closes on OK at "required update" | no updater in `build/play/updater` | `xboxbackup/C/xodash/update.xbe` missing: `scripts/doctor.py` |
-| "A required update is available" again after the update | `rs3_tu501_recomp` not built yet | `scripts/build.sh` again |
-| the game goes back to the dashboard at start | an old lift of the disc's file without the disc-check override | `scripts/build.sh --relift` |
+| "A required update is available" again after the update | `rs3_tu501_recomp` not built yet | `scripts/build.py` again |
+| the game goes back to the dashboard at start | an old lift of the disc's file without the disc-check override | `scripts/build.py --relift` |
 
 ## By hand
 
-`scripts/build.sh` runs these; each can be run on its own.
+`scripts/build.py` does these; on macOS and Linux each can be run on its own.
 
 - `scripts/recompile.sh`: lifts the disc's `default.xbe` into
   `src/recomp/gen` and writes `build/disc_overlay`.

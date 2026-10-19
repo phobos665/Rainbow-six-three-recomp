@@ -63,8 +63,9 @@ class Report:
         self.fatal |= fatal
 
 
-def main() -> int:
-    repo = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
+def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else [str(a) for a in argv]
+    repo = Path(argv[0]) if argv else Path(__file__).resolve().parent.parent
     game, backup = repo / "game", repo / "xboxbackup"
     r = Report()
 
@@ -77,7 +78,7 @@ def main() -> int:
     else:
         r.ok("default.xbe, Rainbow Six 3 (55530013)")
         if not (game / "default_xdk_symbols.json").is_file():
-            print("           its XDK symbols will be made by scripts/build.sh")
+            print("           its XDK symbols will be made by scripts/build.py")
 
     print("Your console's backup (xboxbackup/), for Xbox Live:")
     live = True

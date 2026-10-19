@@ -43,7 +43,7 @@ Rainbow-six-three-recomp/
   src/recomp_manual.c     the title's own overrides, each with its reason
   src/recomp/gen/         lifted code (generated, not committed)
   config/seeds/           functions the disassembler cannot find on its own
-  scripts/build.sh        everything, from your files to build/play
+  scripts/build.py        everything, from your files to build/play (build.sh, build.bat run it)
   scripts/doctor.py       checks the game files and the console backup
   scripts/recompile.sh    runs the toolkit's lift pipeline for this game
   scripts/disc_xbe.py     the disc's default.xbe from a hard-drive copy's
@@ -65,7 +65,7 @@ The toolkit's own requirements apply: see its `docs/GETTING_STARTED.md`
 2. **Build.**
 
    ```bash
-   scripts/build.sh
+   python3 scripts/build.py      # Windows: scripts\build.bat
    ```
 
    It checks your files (`scripts/doctor.py`), builds the toolkit's XDK
