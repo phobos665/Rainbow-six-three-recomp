@@ -27,7 +27,7 @@ sound.
 - **Xbox Live (Insignia).** Signs in and plays online, with title update
   0x501, which the game downloads and installs itself as a console does. It
   needs a backup of your own console; see
-  [docs/xbox-live.md](docs/xbox-live.md).
+  [Playing on Xbox Live](#playing-on-xbox-live).
 
 Known issues:
 
@@ -113,6 +113,77 @@ the runtime maps to the game folder: they are written into `game/UDATA`. It
 also fills its Z: cache partition (about 1 GB a run) under the save folder.
 Test runs belong on a copy of `game/` without `UDATA` (`RECOMP_GAME_DIR`)
 and with `RECOMP_SAVE_DIR` set to a fresh folder.
+
+## Playing on Xbox Live
+
+Rainbow Six 3 can sign in to [Insignia](https://insignia.live/), the free
+revival of the original Xbox Live, and play online with people on real
+consoles. This has been checked on macOS.
+
+Insignia only lets in consoles it knows, so the game signs in as **your own
+Xbox**. You give it a backup of that console; the build does everything else.
+
+### What you need
+
+- An original Xbox you own that can run homebrew (softmodded or chipped),
+  with the EvoX dashboard and FTP access.
+- A free account at [insignia.live](https://insignia.live/).
+- This game built as above, with its files in `game/`.
+
+### 1. Sign the Xbox up (once, on the console)
+
+1. If your modded BIOS blocks Xbox Live, run Insignia's **xblunblock** first.
+2. Run the **Insignia Setup Assistant** and register the console.
+3. Sign in once from the dashboard's **Xbox Live** section, so your gamertag
+   is on the console.
+
+### 2. Back up the Xbox (after step 1)
+
+1. In EvoX, choose **Backup eeprom**. It writes `eeprom.bin`, `hddinfo.txt`
+   and `disk.bin`.
+2. Connect to the Xbox over FTP and copy those three files, and the whole
+   **C:** drive (about 100 MB).
+3. Put them in this repository like this:
+
+   ```text
+   xboxbackup/
+     eeprom.bin
+     hddinfo.txt
+     disk.bin
+     C/            everything from the Xbox's C: drive
+   ```
+
+These files are your console's identity. **Never share them.** Git ignores
+`xboxbackup/`.
+
+### 3. Check and build
+
+```bash
+python3 scripts/doctor.py     # should end with "Xbox Live: ready."
+python3 scripts/build.py      # Windows: scripts\build.bat
+```
+
+### 4. Install the game's update (once)
+
+Insignia needs title update 0x501. The game fetches it itself:
+
+1. Start `build/play/rs3_recomp`.
+2. On the main menu choose **Xbox Live** and sign in.
+3. At "A required update is available", choose **OK**.
+4. The updater opens: choose **Yes**. When it says "Xbox Live is updating
+   your system", it closes and the game starts again.
+5. Quit the game and run `python3 scripts/build.py` again. This builds the
+   updated game.
+
+### 5. Play
+
+Start `build/play/rs3_recomp`. It opens the updated game by itself. Choose
+**Xbox Live** and sign in: your gamertag appears on the main menu, and you
+can join games and use Friends.
+
+Something not working? See the table in
+[docs/xbox-live.md](docs/xbox-live.md#troubleshooting), which also explains
+what the build does.
 
 ## What is specific to this game
 
