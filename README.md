@@ -2,7 +2,7 @@
 
 A native build of Ubisoft's *Tom Clancy's Rainbow Six 3* (Xbox, 2004; title ID
 `0x55530013`, XDK 5659, Unreal Engine 2) made with the
-[xboxrecomp](https://github.com/phobos665/xboxrecomp) toolkit. The game's own
+[DirectXbox-Recomp](https://github.com/phobos665/DirectXbox-Recomp) toolkit. The game's own
 code is lifted to C from the XBE and runs natively; Direct3D 8 and
 DirectSound are replaced at the API boundary.
 
@@ -38,7 +38,7 @@ Known issues:
 
 ```
 Rainbow-six-three-recomp/
-  CMakeLists.txt          the project; pulls in ../xboxrecomp
+  CMakeLists.txt          the project; pulls in ../DirectXbox-Recomp
   src/main.c              entry point, game folder lookup (from the toolkit's template)
   src/recomp_manual.c     the title's own overrides, each with its reason
   src/recomp/gen/         lifted code (generated, not committed)
@@ -53,7 +53,7 @@ Rainbow-six-three-recomp/
 ## Building
 
 You need the toolkit's `main` checked out beside this repository, at
-`../xboxrecomp`. Point `XBOXRECOMP_DIR` elsewhere to use another checkout,
+`../DirectXbox-Recomp`. Point `XBOXRECOMP_DIR` elsewhere to use another checkout,
 both for `scripts/recompile.sh` and for CMake (`-DXBOXRECOMP_DIR=...`).
 
 The toolkit's own requirements apply: see its `docs/GETTING_STARTED.md`

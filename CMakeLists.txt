@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.20)
 # Rainbow Six 3 - Static Recompilation
 #
 # Built against the xboxrecomp toolkit, a checkout beside this one
-# (../xboxrecomp) unless XBOXRECOMP_DIR says otherwise. See README.md.
+# (../DirectXbox-Recomp) unless XBOXRECOMP_DIR says otherwise. See README.md.
 # ============================================================================
 
 # C and C++: the runtime's renderer has C++ in it (the DXC loader, VMA),
@@ -38,8 +38,8 @@ add_compile_definitions(
 # Option B: find_package (if you install xboxrecomp system-wide)
 #   find_package(xboxrecomp REQUIRED)
 #
-# Adjust this path to point to your xboxrecomp clone:
-set(XBOXRECOMP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../xboxrecomp" CACHE PATH
+# Adjust this path to point to your DirectXbox-Recomp clone:
+set(XBOXRECOMP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../DirectXbox-Recomp" CACHE PATH
     "Path to the xboxrecomp toolkit root directory")
 
 # ── Bring-up diagnostics ────────────────────────────────────────

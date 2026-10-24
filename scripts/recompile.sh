@@ -4,11 +4,11 @@
 # scripts/recompile.py (--from disasm after a seed is added, --from lift
 # after a recomp_manual.c override is added).
 #
-#   XBOXRECOMP_DIR  the toolkit (default: ../xboxrecomp beside this repo)
+#   XBOXRECOMP_DIR  the toolkit (default: ../DirectXbox-Recomp beside this repo)
 #   PYTHON          a Python with the toolkit's requirements (capstone)
 set -eu
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
-TOOLKIT="${XBOXRECOMP_DIR:-$HERE/../xboxrecomp}"
+TOOLKIT="${XBOXRECOMP_DIR:-$HERE/../DirectXbox-Recomp}"
 PY="${PYTHON:-$TOOLKIT/.venv/bin/python}"
 [ -x "$PY" ] || PY=python3
 XBE="$HERE/game/default.xbe"
