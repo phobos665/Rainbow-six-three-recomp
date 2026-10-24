@@ -14,7 +14,7 @@ and with a backup the online updater too. Once the game has installed title
 update 0x501 (Xbox Live, "A required update is available"), run it again: it
 builds the update's game, which the disc's then starts by itself.
 
-  XBOXRECOMP_DIR  the toolkit (default: ../xboxrecomp beside this repo)
+  XBOXRECOMP_DIR  the toolkit (default: ../DirectXbox-Recomp beside this repo)
   RECOMP_HDD_DIR  the E: drive, if not hdd_dir in the settings, else game/
 """
 import argparse
@@ -237,7 +237,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--relift", action="store_true", help="lift everything again")
     args = ap.parse_args()
-    toolkit = Path(os.environ.get("XBOXRECOMP_DIR", HERE.parent / "xboxrecomp")).resolve()
+    toolkit = Path(os.environ.get("XBOXRECOMP_DIR", HERE.parent / "DirectXbox-Recomp")).resolve()
     if not (toolkit / "scripts" / "recompile.py").is_file():
         sys.exit(f"The toolkit is not at {toolkit}: check it out there, or set XBOXRECOMP_DIR.")
     for tool in ("cmake",):

@@ -14,7 +14,7 @@ yet tried.
 - **The game's files** in `game/` (README). A copy made to run from a
   console's hard disk will do: the build undoes its patches (below).
 - **Your console, signed up with Insignia.** Sign it up on the real console
-  first; the toolkit's guide (`docs/xbox-live-guide.md` in `xboxrecomp`,
+  first; the toolkit's guide (`docs/xbox-live-guide.md` in `DirectXbox-Recomp`,
   Steps 1 and 2) says how, and how to make the backup.
 - **Its backup**, in `xboxbackup/` in this repository (kept out of git):
 
