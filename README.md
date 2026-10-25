@@ -1,38 +1,158 @@
 # Tom Clancy's Rainbow Six 3 (Xbox) — static recompilation
 
-A native build of Ubisoft's *Tom Clancy's Rainbow Six 3* (Xbox, 2004; title ID
-`0x55530013`, XDK 5659, Unreal Engine 2) made with the
-[DirectXbox-Recomp](https://github.com/phobos665/DirectXbox-Recomp) toolkit. The game's own
-code is lifted to C from the XBE and runs natively; Direct3D 8 and
-DirectSound are replaced at the API boundary.
+Ubisoft's *Tom Clancy's Rainbow Six 3* (Xbox, 2004) recompiled into a native
+program for Windows, macOS and Linux (including SteamOS and the Steam Deck).
+You bring your own copy of the game, and it is built from that copy on your
+computer. This repository and its releases contain no game code or data.
 
-**No game code or data is in this repository.** You need the files from a
-copy of the disc you own.
+- [Play](#play): download, point it at your disc, play.
+- [Build it yourself](#build-it-yourself): for developers working on the port,
+  and for [Xbox Live](#playing-on-xbox-live), which needs a build of your own.
 
-## Current State
+# Play
 
-Runs on macOS (Apple Silicon) from boot through the intro movies, the menus
+## What you need
+
+- Rainbow Six 3: a disc image (`.iso` or `.xiso`), a folder with the disc's
+  files in it, or a copy made to run from a console's hard disk. Other
+  releases are refused (see [Releases of the game](#releases-of-the-game)).
+- 64-bit Windows 10 or 11, a Mac with Apple Silicon (macOS 13 or later), or
+  x86-64 Linux, SteamOS included, with Vulkan drivers.
+- About 500 MB of space, plus room for the game's files if you give it a disc
+  image (an image is unpacked once; a folder is used where it is), and about
+  1 GB for the game's own cache.
+
+Nothing else needs installing: the download carries everything it builds the
+game with.
+
+## Download and start
+
+Download the file for your system from the
+[latest release](https://github.com/phobos665/Rainbow-six-three-recomp/releases/latest):
+
+| System | File | Start |
+| --- | --- | --- |
+| Windows | `rs3-<version>-windows-x86_64.zip` | Unzip it and run `rs3.exe` |
+| macOS | `rs3-<version>-macos-arm64.tar.xz` | Unpack it, then see [macOS](#macos) below |
+| Linux, SteamOS | `rs3-<version>-linux-x86_64.tar.xz` | Unpack it and run `./rs3` |
+
+The first time it starts, it asks for your copy of the game: choose **Disc
+image...** or **Folder...**, or paste a path. It then builds the game, which
+takes several minutes (longer on a Steam Deck), and opens the settings. Press
+**Play**. After that it opens straight to the settings.
+
+**Windows** may say it protected your PC, because the release is not signed:
+choose More info, then Run anyway.
+
+### macOS
+
+Move `Rainbow Six 3.app` to Applications. It is not signed with an Apple
+Developer ID, so before opening it the first time, open Terminal and run
+
+```sh
+xattr -dr com.apple.quarantine "/Applications/Rainbow Six 3.app"
+```
+
+That clears the flag macOS puts on everything downloaded, from the app and the
+tools it builds the game with. Then open it.
+
+### Steam Deck and SteamOS
+
+Unpack the release in desktop mode and run `rs3` once to build the game. To
+play from Game Mode, add `rs3` to Steam (Add a Non-Steam Game) and give the
+shortcut `icon.png` from the release folder as its icon.
+
+## What works
+
+Played on macOS (Apple Silicon) from boot through the intro movies, the menus
 over their Bink backgrounds, the briefings and into the levels, at 60 fps with
 sound.
 
-- **60 fps.** The title asks D3D for 30 (`TWO_OR_IMMEDIATE`), but its game is
-  timed by Unreal's delta time, so it runs at 60. Its Bink movies, which it
-  stepped once a frame, are paced by the clock instead, so they play at their
-  own 30 fps. `RECOMP_TITLE_INTERVAL=1` holds the game to the console's 30.
-- **Night and thermal vision, bloom.** The post-process chain (screen copy,
-  bright pass with depth in alpha, eight-level blur, additive composite) is
-  drawn as the console draws it.
-- **Sound.** The game makes about 800 DirectSound streams in a session, one
-  per sound; the toolkit's stream pool keeps all of them heard.
-- **Xbox Live (Insignia).** Signs in and plays online, with title update
-  0x501, which the game downloads and installs itself as a console does. It
-  needs a backup of your own console; see
-  [Playing on Xbox Live](#playing-on-xbox-live).
+- **60 fps.** The game asks for 30, but it is timed by Unreal's delta time, so
+  it runs at 60. Its Bink movies are paced by the clock, so they play at their
+  own 30 fps.
+- **Night and thermal vision, bloom**, drawn as the console draws them.
+- **Sound.** The game makes about 800 sound streams in a session, one per
+  sound, and all of them are heard.
+- **Xbox Live (Insignia)** signs in and plays online, from a build of your own
+  with a backup of your own console: see [Playing on Xbox
+  Live](#playing-on-xbox-live).
 
 Known issues:
 
-- Not yet checked: the game's own widescreen mode. No `recomp_title_widescreen`
-  is declared, so the toolkit treats it as native 16:9.
+- The game's own widescreen mode has not been checked yet.
+
+## Controls
+
+Controllers work as an Xbox pad, and the keyboard plays as controller 1.
+Change the bindings in the launcher's Input tab.
+
+While playing:
+
+| Key | |
+| --- | --- |
+| F9 | Show or hide the frame rate |
+| F10 | Change the frame cap |
+| F11 | Save a screenshot and a capture of the frame, for bug reports |
+| Alt+Enter | Switch between fullscreen and a window |
+
+## Where things are kept
+
+The built game, its saves and the logs are in one folder per user:
+
+| | |
+| --- | --- |
+| Windows | `%LOCALAPPDATA%\xboxrecomp\builds\55530013\` |
+| macOS | `~/Library/Application Support/xboxrecomp/builds/55530013/` |
+| Linux | `~/.local/share/xboxrecomp/builds/55530013/` |
+
+In it, `game/UDATA/` holds your saves, `build.log` is the build's log and
+`rs3_recomp.log` the game's. Your own disc or folder is never written to.
+
+The settings and controls are kept apart from the build:
+
+| | Settings | Controls |
+| --- | --- | --- |
+| Windows | `%APPDATA%\xboxrecomp\titles\55530013.conf` | `%APPDATA%\xboxrecomp\input_bindings.json` |
+| macOS | `~/Library/Application Support/xboxrecomp/titles/55530013.conf` | `~/Library/Application Support/xboxrecomp/input_bindings.json` |
+| Linux | `~/.config/xboxrecomp/titles/55530013.conf` | `~/.config/xboxrecomp/input_bindings.json` |
+
+## Updating
+
+Download the new release and start it. It sees that the game was built by an
+older release and offers **Build again**, with your disc remembered. Saves and
+settings carry over.
+
+## Problems
+
+- The disc is refused: it is not one of the releases below. Please open an
+  issue with the title, region and SHA-1 the message shows.
+- The build fails: open an issue and attach `build.log` (see [Where things
+  are kept](#where-things-are-kept)).
+- A black window and nothing else: attach `rs3_recomp.log` from the same
+  folder.
+- A rendering bug in one place: press F11 there, and attach the `.bmp` and
+  `.d3dcap` files it writes beside the game.
+
+## Releases of the game
+
+The game is recognised by the SHA-1 of its `default.xbe`:
+
+| Copy | `default.xbe` SHA-1 |
+| --- | --- |
+| Disc | `a232aa535391d53ea01ace0df17f801ee03c57f6` |
+| Hard-drive copy | `7aea9715ad1a42d83796f9e106fd6e6a75ae9635` |
+
+Any other is refused.
+
+# Build it yourself
+
+For working on the port, and for Xbox Live. This builds the game by hand, from
+a clone, against the
+[DirectXbox-Recomp](https://github.com/phobos665/DirectXbox-Recomp) toolkit:
+the game's own code (title ID `0x55530013`, XDK 5659, Unreal Engine 2) is
+lifted to C from the XBE and runs natively, and Direct3D 8 and DirectSound
+are replaced at the API boundary.
 
 ## Layout
 
@@ -43,10 +163,12 @@ Rainbow-six-three-recomp/
   src/recomp_manual.c     the title's own overrides, each with its reason
   src/recomp/gen/         lifted code (generated, not committed)
   config/seeds/           functions the disassembler cannot find on its own
+  release/rs3.json        the recipe the release workflow builds from
   scripts/build.py        everything, from your files to build/play (build.sh, build.bat run it)
   scripts/doctor.py       checks the game files and the console backup
   scripts/recompile.sh    runs the toolkit's lift pipeline for this game
   scripts/disc_xbe.py     the disc's default.xbe from a hard-drive copy's
+  scripts/release_lift.py the lift a release runs on the player's machine
   game/                   your game files (not committed)
 ```
 
@@ -87,15 +209,14 @@ cmake --build build/Release --target rs3_recomp --parallel
 
 On Windows the toolkit's launcher is built too (`rs3_launcher`).
 
-## Running
+## Running a build of your own
 
 ```bash
 build/play/rs3_recomp
 ```
 
-Settings live in the per-user settings file the toolkit writes
-(`~/Library/Application Support/xboxrecomp/titles/55530013.conf` on macOS), or
-as environment variables:
+The settings file is as in [Where things are kept](#where-things-are-kept),
+and these environment variables are particular to this game:
 
 | Variable | Default | |
 |---|---|---|
@@ -105,20 +226,18 @@ as environment variables:
 | `RECOMP_VA_64K` | 1 | regions on 64 KB boundaries (Unreal's pooled allocator needs it) |
 | `RECOMP_ETHERNET_LINK` | 0 | 0 reports no cable, so XNet does not wait on DHCP at start-up |
 
-F9 shows the frame rate, F10 steps the frame cap, F11 saves a capture of the
-frame on screen.
-
 **Saves and cache.** The game keeps its saves on the Xbox's E: drive, which
-the runtime maps to the game folder: they are written into `game/UDATA`. It
-also fills its Z: cache partition (about 1 GB a run) under the save folder.
-Test runs belong on a copy of `game/` without `UDATA` (`RECOMP_GAME_DIR`)
-and with `RECOMP_SAVE_DIR` set to a fresh folder.
+the runtime maps to the game folder: in a build of your own they are written
+into `game/UDATA`. It also fills its Z: cache partition (about 1 GB a run)
+under the save folder. Test runs belong on a copy of `game/` without `UDATA`
+(`RECOMP_GAME_DIR`) and with `RECOMP_SAVE_DIR` set to a fresh folder.
 
 ## Playing on Xbox Live
 
 Rainbow Six 3 can sign in to [Insignia](https://insignia.live/), the free
 revival of the original Xbox Live, and play online with people on real
-consoles. This has been checked on macOS.
+consoles. This has been checked on macOS, from a build of your own; the
+release download does not do it.
 
 Insignia only lets in consoles it knows, so the game signs in as **your own
 Xbox**. You give it a backup of that console; the build does everything else.
@@ -197,3 +316,12 @@ All in `src/recomp_manual.c` and `config/`:
   frame is shown again.
 - **Seeds:** thread routines and indirect-call targets seen at run time,
   among them the XNet timer callback (`0x003AC22A`) and the Bink blitters.
+
+## Making a release
+
+Pushing a version tag (`git tag v1.0 && git push origin v1.0`) runs
+`.github/workflows/release.yml`, which builds the Windows, macOS and Linux
+downloads from `release/rs3.json` and attaches them to the tag's GitHub
+release. No game files are involved. How the downloads work is in the
+toolkit's
+[self-build-release.md](https://github.com/phobos665/DirectXbox-Recomp/blob/main/docs/technical/self-build-release.md).
