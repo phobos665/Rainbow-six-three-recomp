@@ -27,6 +27,9 @@ Makefile
 Debug/
 Release/
 x64/
+# The self-building release's recipe, not a Visual Studio folder (a Mac's
+# file names ignore case)
+!/release/
 
 # Generated recompiled code (regenerate from XBE with the recomp pipeline)
 src/recomp/gen/

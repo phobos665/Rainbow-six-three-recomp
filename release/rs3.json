@@ -1,0 +1,25 @@
+{
+  "title_name": "Rainbow Six 3",
+  "title_id": "55530013",
+  "project": "..",
+  "exe": "rs3_recomp",
+  "launcher": "rs3_launcher",
+  "release_name": "rs3",
+  "images": [
+    {
+      "sha1": "a232aa535391d53ea01ace0df17f801ee03c57f6",
+      "name": "Disc"
+    },
+    {
+      "sha1": "7aea9715ad1a42d83796f9e106fd6e6a75ae9635",
+      "name": "Hard-drive copy"
+    }
+  ],
+  "lift": [
+    "scripts/release_lift.py",
+    "{xbe_dir}"
+  ],
+  "include": [
+    "scripts/disc_xbe.py"
+  ]
+}
