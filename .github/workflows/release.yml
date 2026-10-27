@@ -34,7 +34,7 @@ env:
   # The toolkit this repository builds against (README.md): a branch, tag or
   # commit of DirectXbox-Recomp. Pinned, so a release is built from the
   # toolkit it was tested with: main at 5e474c1 (#102).
-  TOOLKIT_REF: 5e474c10342123d37dd02b0c0a1f32484e583089
+  TOOLKIT_REF: b6e4c89f47273f7f5398522c93bdc7a3ebdb4bfc
 
 jobs:
   linux:
