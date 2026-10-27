@@ -177,6 +177,9 @@ Rainbow-six-three-recomp/
 You need the toolkit's `main` checked out beside this repository, at
 `../DirectXbox-Recomp`. Point `XBOXRECOMP_DIR` elsewhere to use another checkout,
 both for `scripts/recompile.sh` and for CMake (`-DXBOXRECOMP_DIR=...`).
+Releases are built against the toolkit commit pinned in
+`.github/workflows/release.yml` (`TOOLKIT_REF`); check that commit out to build
+exactly what a release does.
 
 The toolkit's own requirements apply: see its `docs/GETTING_STARTED.md`
 (on macOS: Homebrew CMake and Ninja, the LunarG Vulkan SDK, a Python with
