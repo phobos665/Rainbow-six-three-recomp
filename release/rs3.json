@@ -21,5 +21,9 @@
   ],
   "include": [
     "scripts/disc_xbe.py"
-  ]
+  ],
+  "android": {
+    "package": "org.directxboxrecomp.rainbowsix3",
+    "label": "Rainbow Six 3"
+  }
 }
