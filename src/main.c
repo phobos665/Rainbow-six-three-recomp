@@ -447,6 +447,22 @@ static int title_main(int argc, char **argv)
     setvbuf(stderr, NULL, _IONBF, 0);
 
     printf("=== Rainbow Six 3 - Static Recompilation ===\n");
+
+    /* Programs write their own Z under D3DZB_USEW, not W. RS3 draws its
+     * world fixed-function, which writes Z, and its soldiers with a vertex
+     * program: with the toolkit's W path a soldier wrote eye distance over
+     * the depth scale (~0.0001) against a wall's Z (~0.99) and was drawn
+     * through every wall, plainest under a scope. The program's own Z
+     * matches the world's. Set before the device reads it; the title-update
+     * build inherits it. RECOMP_D3D8_WBUFFER=1 still turns W back on. */
+    if (!getenv("RECOMP_D3D8_WBUFFER")) {
+#ifdef _WIN32
+        _putenv_s("RECOMP_D3D8_WBUFFER", "0");
+#else
+        setenv("RECOMP_D3D8_WBUFFER", "0", 1);
+#endif
+    }
+
     printf("Loading XBE...\n");
 
     /* The fault handler, first in line: a VEH on Windows, signals on POSIX.
