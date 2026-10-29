@@ -132,7 +132,18 @@ extern uint32_t g_xbox_code_hi;
  *
  * Both are set before main, and only if the variable is not already set, so
  * =0 or =1 on the command line still wins.
+ *
+ * And 128 MB of address space for the heap (xbox_SetMapSize; RAM stays the
+ * 64 MB the title is told it has). A guest VA is its own storage here, so a
+ * VirtualAlloc needs one free stretch where the console needs only free
+ * pages. After a level the pools leave the heap in pieces: returning to the
+ * main menu on 28 Oct 2026 asked for 764 KB with 21 MB free in 7400 blocks,
+ * the largest 512 KB. FMalloc's out-of-memory path (sub_000164C0) frees its
+ * pools and parks in sub_002BB570, which relaunches the title only when it
+ * was itself started by a relaunch, so the game froze on the menu's first
+ * frame. BLiNX runs on a 128 MB map the same way.
  */
+void xbox_SetMapSize(size_t bytes);
 #if defined(_MSC_VER)
 static void __cdecl rs3_defaults(void)
 {
@@ -140,6 +151,7 @@ static void __cdecl rs3_defaults(void)
         _putenv("RECOMP_VA_64K=1");
     if (!getenv("RECOMP_ETHERNET_LINK"))
         _putenv("RECOMP_ETHERNET_LINK=0");
+    xbox_SetMapSize((size_t)128 << 20);
 }
 #pragma section(".CRT$XCU", read)
 __declspec(allocate(".CRT$XCU")) void (__cdecl *rs3_defaults_init)(void) = rs3_defaults;
@@ -157,6 +169,7 @@ __attribute__((constructor)) static void rs3_defaults(void)
     setenv("RECOMP_VA_64K", "1", 0);       /* 0: an existing value wins */
     setenv("RECOMP_ETHERNET_LINK", "0", 0);
 #endif
+    xbox_SetMapSize((size_t)128 << 20);
 }
 #endif
 
