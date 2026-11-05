@@ -25,5 +25,20 @@
   "android": {
     "package": "org.directxboxrecomp.rainbowsix3",
     "label": "Rainbow Six 3"
+  },
+  "updater": true,
+  "title_update": {
+    "exe": "rs3_tu501_recomp",
+    "sha1": [
+      "30c6a2f53fac188c00d2db74854ab9dc465b896f"
+    ],
+    "lift": [
+      "scripts/release_lift.py",
+      "--tu501",
+      "{xbe_dir}"
+    ],
+    "cmake": [
+      "-DRS3_TU501=ON"
+    ]
   }
 }

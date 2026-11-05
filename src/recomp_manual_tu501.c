@@ -141,6 +141,8 @@ extern uint32_t g_xbox_code_hi;
  * Both are set before main, and only if the variable is not already set, so
  * =0 or =1 on the command line still wins.
  */
+/* 128 MB of heap address space: see recomp_manual.c. */
+void xbox_SetMapSize(size_t bytes);
 #if defined(_MSC_VER)
 static void __cdecl rs3_defaults(void)
 {
@@ -148,6 +150,7 @@ static void __cdecl rs3_defaults(void)
         _putenv("RECOMP_VA_64K=1");
     if (!getenv("RECOMP_ETHERNET_LINK"))
         _putenv("RECOMP_ETHERNET_LINK=0");
+    xbox_SetMapSize((size_t)128 << 20);
 }
 #pragma section(".CRT$XCU", read)
 __declspec(allocate(".CRT$XCU")) void (__cdecl *rs3_defaults_init)(void) = rs3_defaults;
@@ -165,6 +168,7 @@ __attribute__((constructor)) static void rs3_defaults(void)
     setenv("RECOMP_VA_64K", "1", 0);       /* 0: an existing value wins */
     setenv("RECOMP_ETHERNET_LINK", "0", 0);
 #endif
+    xbox_SetMapSize((size_t)128 << 20);
 }
 #endif
 
